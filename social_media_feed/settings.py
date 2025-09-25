@@ -46,7 +46,7 @@ DEBUG = env("DJANGO_DEBUG", default=False)
 
 ALLOWED_HOSTS = os.getenv(
     "DJANGO_ALLOWED_HOSTS",
-    "social-media-backend-czfk.onrender.com,mysocial256.vercel.app,localhost,127.0.0.1"
+    "social-media-backend-czfk.onrender.com,https://mysocial256.vercel.app,http://localhost,127.0.0.1"
 ).split(",")
 
 # Application definition
@@ -198,8 +198,15 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
 # CORS / CSRF
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"])
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["http://localhost:3000"])
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "CORS_ALLOWED_ORIGINS", 
+    "http://localhost:3000,http://127.0.0.1:3000,https://mysocial256.vercel.app"
+).split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", 
+    "http://localhost:3000,http://127.0.0.1:3000,https://mysocial256.vercel.app"
+).split(",")
 
 # PRODUCTION SECURITY SETTINGS
 if not DEBUG:

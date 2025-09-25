@@ -42,8 +42,8 @@ class CreatePost(graphene.Mutation):
 
     class Arguments:
         content = graphene.String(required=True)
-        image = Upload(required=False)
-
+        image = graphene.String(required=False) 
+        
     def mutate(self, info, content, image=None):
         user = info.context.user
         if user.is_anonymous:
@@ -59,7 +59,7 @@ class UpdatePost(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
         content = graphene.String(required=False)
-        image = Upload(required=False)
+        image = graphene.String(required=False) 
 
     def mutate(self, info, id, content=None, image=None):
         user = info.context.user
