@@ -11,8 +11,7 @@ User = get_user_model()
 class PostType(DjangoObjectType):
     class Meta:
         model = Post
-        fields = ("id", "author", "content", "image", "created_at")
-
+        fields = ("id", "author", "content", "image_url", "created_at")
 
 class Query(graphene.ObjectType):
     posts = graphene.List(PostType)
@@ -36,22 +35,20 @@ class Query(graphene.ObjectType):
         followed_ids = user.following.values_list("following_id", flat=True)
         return Post.objects.filter(author_id__in=followed_ids).order_by("-created_at")
 
-
 class CreatePost(graphene.Mutation):
     post = graphene.Field(PostType)
 
     class Arguments:
         content = graphene.String(required=True)
-        image = graphene.String(required=False) 
+        image_url = graphene.String(required=False) 
         
-    def mutate(self, info, content, image=None):
+    def mutate(self, info, content, image_url=None):
         user = info.context.user
         if user.is_anonymous:
             raise GraphQLError("You must be logged in")
 
-        post = Post.objects.create(author=user, content=content, image=image)
+        post = Post.objects.create(author=user, content=content, image_url=image_url)
         return CreatePost(post=post)
-
 
 class UpdatePost(graphene.Mutation):
     post = graphene.Field(PostType)
@@ -59,9 +56,9 @@ class UpdatePost(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
         content = graphene.String(required=False)
-        image = graphene.String(required=False) 
+        image_url = graphene.String(required=False) 
 
-    def mutate(self, info, id, content=None, image=None):
+    def mutate(self, info, id, content=None, image_url=None):
         user = info.context.user
         if user.is_anonymous:
             raise GraphQLError("You must be logged in")
@@ -74,10 +71,9 @@ class UpdatePost(graphene.Mutation):
         if content:
             post.content = content
         if image:
-            post.image = image
+            post.image_url = image_url
         post.save()
         return UpdatePost(post=post)
-
 
 class DeletePost(graphene.Mutation):
     success = graphene.Boolean()
@@ -96,7 +92,6 @@ class DeletePost(graphene.Mutation):
             return DeletePost(success=True)
         except Post.DoesNotExist:
             raise GraphQLError("Post not found or not authorized")
-
 
 class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
