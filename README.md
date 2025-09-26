@@ -1,5 +1,3 @@
-![Backend CI](https://github.com/CiiruNgunjiri/alx-project-nexus/actions/workflows/ci.yml/badge.svg?branch=feature/ci-setup)
-
 # 📖 Project Nexus - ProDev Backend Engineering
 
 ## 📌 Overview
@@ -21,11 +19,12 @@ As a case study, I showcase my **Social Media Feed Backend** project — a scala
 ## 🛠️ Key Technologies Covered
 - **Python** (3.10+)  
 - **Django** (backend framework)  
-- **REST APIs** (Django REST Framework)  
 - **GraphQL** (Graphene-Django)  
 - **PostgreSQL** (relational database)  
 - **Docker & docker-compose** (containerization)  
-- **CI/CD Pipelines** (automation & deployment)  
+- **Redis** (caching)  
+- **Celery + RabbitMQ** (async tasks)  
+- **CI/CD Pipelines** (GitHub Actions + deployment)  
 
 ---
 
@@ -42,6 +41,10 @@ As a case study, I showcase my **Social Media Feed Backend** project — a scala
 ### 3. Caching Strategies
 - Using **Redis** for frequently accessed queries (e.g., feeds, trending posts).  
 - Improving response times by avoiding repeated expensive queries.  
+
+### 4. GraphQL-Only API
+- No REST endpoints.  
+- Users, posts, and interactions exposed through a schema.  
 
 ---
 ### 🚀 Getting Started
@@ -93,6 +96,14 @@ MEDIA_ROOT=/path/to/media
 
 - Open your browser: http://127.0.0.1:8000/
 
+## Run with docker:
+- docker-compose up --build
+- docker-compose run --rm web python manage.py migrate
+- docker-compose run --rm web python manage.py createsuperuser
+
+# Access App
+Backend API: http://127.0.0.1:8000/graphql/
+Admin Panel: http://127.0.0.1:8000/admin/
 
 ### ⚡ Case Study: Social Media Feed Backend
 ## Real-World Application
@@ -108,6 +119,13 @@ Key learnings included:
 - **Follow System:** Users can follow/unfollow others.  
 - **Feed:** Personalized feed of posts from followed users, sorted by newest first.  
 - **Interactions:** Users can like, comment, and share posts.  
+
+## Features
+- User Authentication & Profiles
+- Post Management (CRUD) with image URL field
+- Follow System (users can follow/unfollow)
+- Personalized Feeds sorted by newest posts
+- Interactions: likes, comments
 
 ---
 
@@ -194,22 +212,22 @@ mutation {
 }
 
 ### 🔑 Challenges & Solutions
-* Challenge: Optimizing feeds for large numbers of users.
-Solution: Used query optimization + Redis caching.
+* Challenge: GraphQL file upload issues.
+Solution: Rolled back to using image_url (string field) for reliability.
 
-* Challenge: Handling background notifications.
-Solution: Integrated Celery with RabbitMQ for async tasks.
+* Challenge: CORS errors in deployment.
+Solution: Configured CORS_ALLOWED_ORIGINS and CSRF_TRUSTED_ORIGINS in settings.
 
-* Challenge: Ensuring authorization for mutations.
-Solution: Implemented user ownership checks in GraphQL resolvers.
+* Challenge: Background processing.
+Solution: Integrated Celery + RabbitMQ.
 
 ### 🏆 Best Practices & Takeaways
 
-- Write modular and clean code (apps, serializers, schema separation).
-- Always include unit tests to catch regressions early.
-- Use version control with clear commit messages (feat:, fix:, docs:).
-- Prioritize scalability: caching, async tasks, optimized queries.
-- Collaboration between frontend and backend learners ensures smooth integration.
+- Modular Django apps and GraphQL schema separation.
+- CI/CD pipelines ensure automated builds + tests.
+- Redis + Celery for scalability.
+- Clear commit workflow (feat:, fix:, docs:).
+- Collaboration with frontend developers ensured smooth API integration.
 
 ### 🤝 Collaboration
 
@@ -234,11 +252,12 @@ Solution: Implemented user ownership checks in GraphQL resolvers.
 
 - Version Control – frequent commits with meaningful messages.
 
+![Backend CI](https://github.com/CiiruNgunjiri/alx-project-nexus/actions/workflows/ci.yml/badge.svg?branch=feature/ci-setup)
 
 ### 👩‍💻 Author
-
 Ciiru Ngunjiri
 ProDev Backend Engineer
+
 - GitHub: CiiruNgunjiri (https://github.com/CiiruNgunjiri)
 - Linkedin: Linda Ngunjiri (www.linkedin.com/in/linda-ngunjiri35)
 - Email: ciiru.ngunjiri@gmail.com
