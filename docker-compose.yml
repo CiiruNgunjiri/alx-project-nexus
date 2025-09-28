@@ -3,6 +3,7 @@ services:
     build: .
     command: >
       sh -c "./wait-for-it.sh db:5432 --
+      ./wait-for-it.sh redis:6379 --
       python manage.py migrate &&
       gunicorn social_media_feed.wsgi:application --bind 0.0.0.0:8000 --workers 4"
     volumes:
@@ -49,6 +50,7 @@ services:
     command: >
       sh -c "./wait-for-it.sh db:5432 --
       ./wait-for-it.sh rabbitmq:5672 --
+      ./wait-for-it.sh redis:6379 --
       celery -A social_media_feed worker --loglevel=INFO"
     volumes:
       - .:/app
@@ -63,6 +65,7 @@ services:
     command: >
       sh -c "./wait-for-it.sh db:5432 --
       ./wait-for-it.sh rabbitmq:5672 --
+      ./wait-for-it.sh redis:6379 --
       celery -A social_media_feed beat --loglevel=INFO"
     volumes:
       - .:/app
