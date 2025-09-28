@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt1-dev \
     default-libmysqlclient-dev \
+    postgresql-client \  
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip, setuptools, wheel
