@@ -19,6 +19,9 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     networks:
       - nexus
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
 
   # db:
   #   image: postgres:15
@@ -60,9 +63,10 @@ services:
   celery:
     build: .
     command: >
-      sh -c "./wait-for-it.sh rabbitmq:5672 --
+      sh -c "./wait-for-it.sh db:5432 --
+      ./wait-for-it.sh rabbitmq:5672 --
       ./wait-for-it.sh redis:6379 --
-      celery -A social_media_feed worker --loglevel=INFO"
+      celery -A social_media_feed beat --loglevel=INFO --uid celery_nexus --gid celery"
     volumes:
       - .:/app
     env_file:
@@ -74,13 +78,17 @@ services:
         condition: service_healthy
     networks:
       - nexus
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
 
   celery-beat:
     build: .
     command: >
       sh -c "./wait-for-it.sh rabbitmq:5672 --
       ./wait-for-it.sh redis:6379 --
-      celery -A social_media_feed beat --loglevel=INFO"
+      celery -A social_media_feed beat --loglevel=INFO --schedule=/tmp/celerybeat-schedule"
     volumes:
       - .:/app
     env_file:
@@ -92,6 +100,10 @@ services:
         condition: service_healthy
     networks:
       - nexus
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
 
 volumes:
   postgres_data:

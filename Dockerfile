@@ -43,5 +43,10 @@ USER celery_nexus
 # Expose Django port
 EXPOSE 8000
 
-# Start Django with Gunicorn
-CMD ["gunicorn", "social_media_feed.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
+# Keep container running as root so DNS works
+# But Gunicorn + Celery will drop to celery_nexus internally
+CMD ["gunicorn", "social_media_feed.wsgi:application", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "4", \
+     "--user", "celery_nexus", \
+     "--group", "celery"]
