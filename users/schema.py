@@ -55,6 +55,11 @@ class CreateUser(graphene.Mutation):
         password = graphene.String(required=True)
 
     def mutate(self, info, username, email, password):
+        if UserModel.objects.filter(username=username).exists():
+            raise GraphQLError("Username already exists.")
+        if UserModel.objects.filter(email=email).exists():
+            raise GraphQLError("Email already registered.")
+        
         user = UserModel(username=username, email=email)
         user.set_password(password)
         user.save()

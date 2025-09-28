@@ -4,6 +4,7 @@ from graphql import GraphQLError
 from django.contrib.auth import get_user_model
 from .models import Like, Comment, Share
 from posts.models import Post
+from .tasks import send_comment_notification
 
 User = get_user_model()
 
@@ -115,9 +116,8 @@ class AddComment(graphene.Mutation):
 
         comment = Comment.objects.create(user=user, post=post, content=content)
 
-        # 🔥 Async task for comment
-        if post.author.email:
-            from .tasks import send_comment_notification
+        # 🔥 Async task for comment notification
+        if post.author and post.author.email:
             post_excerpt = (post.content[:50] + "...") if len(post.content) > 50 else post.content
             comment_excerpt = (content[:100] + "...") if len(content) > 100 else content
             send_comment_notification.delay(
